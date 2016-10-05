@@ -10,18 +10,16 @@ namespace SmtpServer.Tests
 {
     public class SmtpServerTests
     {
-        readonly MockMessageStore _messageStore;
-        readonly OptionsBuilder _optionsBuilder;
-        readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly MockMessageStoreFactory _messageStoreFactory = new MockMessageStoreFactory();
+        private readonly OptionsBuilder _optionsBuilder;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public SmtpServerTests()
         {
-            _messageStore = new MockMessageStore();
-
             _optionsBuilder = new OptionsBuilder()
                 .ServerName("localhost")
                 .Port(25)
-                .MessageStore(_messageStore);
+                .MessageStore(_messageStoreFactory);
         }
 
         [Fact]
@@ -36,15 +34,15 @@ namespace SmtpServer.Tests
             smtpClient.Send("test1@test.com", "test2@test.com", "Test", "Test Message");
 
             // assert
-            Assert.Equal(1, _messageStore.Messages.Count);
-            Assert.Equal("test1@test.com", _messageStore.Messages[0].From.AsAddress());
-            Assert.Equal(1, _messageStore.Messages[0].To.Count);
-            Assert.Equal("test2@test.com", _messageStore.Messages[0].To[0].AsAddress());
+            Assert.Equal(1, _messageStoreFactory.Messages.Count);
+            Assert.Equal("test1@test.com", _messageStoreFactory.Messages[0].From.AsAddress());
+            Assert.Equal(1, _messageStoreFactory.Messages[0].To.Count);
+            Assert.Equal("test2@test.com", _messageStoreFactory.Messages[0].To[0].AsAddress());
 
             Wait(smtpServerTask);
         }
 
-        void Wait(Task smtpServerTask)
+        private void Wait(Task smtpServerTask)
         {
             _cancellationTokenSource.Cancel();
 

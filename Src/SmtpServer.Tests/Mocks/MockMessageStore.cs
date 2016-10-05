@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SmtpServer.Mail;
@@ -7,20 +8,52 @@ using SmtpServer.Storage;
 
 namespace SmtpServer.Tests.Mocks
 {
-    public class MockMessageStore : MessageStore
+    internal class MockMessageStore : MessageStore
     {
-        readonly List<IMimeMessage> _messages = new List<IMimeMessage>();
+        public event EventHandler<MimeMessageEventArgs> Saved;
 
-        public override Task<SmtpResponse> SaveAsync(ISessionContext context, IMimeMessage message, CancellationToken cancellationToken)
+        public MockMessageStore(ISessionContext context, IMimeMessage message)
+            : base(context, message)
         {
-            _messages.Add(message);
-
-            return Task.FromResult(SmtpResponse.Ok);
         }
 
-        public List<IMimeMessage> Messages
+        public override Task<SmtpResponse> EndWriteAsync(CancellationToken cancellationToken)
         {
-            get { return _messages; }
+            OnSaved(new MimeMessageEventArgs(Message));
+
+            return base.EndWriteAsync(cancellationToken);
+        }
+
+        protected virtual void OnSaved(MimeMessageEventArgs e)
+        {
+            Saved?.Invoke(this, e);
+        }
+    }
+
+    internal class MockMessageStoreFactory : IMessageStoreFactory
+    {
+        public List<IMimeMessage> Messages { get; } = new List<IMimeMessage>();
+
+        public IMessageStore CreateInstance(ISessionContext context, IMimeMessage message)
+        {
+            var store = new MockMessageStore(context, message);
+            store.Saved += Store_Saved;
+            return store;
+        }
+
+        private void Store_Saved(object sender, MimeMessageEventArgs e)
+        {
+            Messages.Add(e.Message);
+        }
+    }
+
+    internal class MimeMessageEventArgs : EventArgs
+    {
+        public IMimeMessage Message { get; }
+
+        public MimeMessageEventArgs(IMimeMessage message)
+        {
+            Message = message;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Text;
 using SmtpServer.Mail;
 
 namespace SmtpServer
@@ -21,7 +20,6 @@ namespace SmtpServer
         {
             From = null;
             To = new Collection<IMailbox>();
-            Mime = new StringBuilder();
         }
     }
 }

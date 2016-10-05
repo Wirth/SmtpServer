@@ -15,7 +15,7 @@ namespace SampleApp
             var options = new OptionsBuilder()
                 .ServerName("SmtpServer SampleApp")
                 .Port(9025)
-                .MessageStore(new ConsoleMessageStore())
+                .MessageStore(new ConsoleMessageStoreFactory())
                 .MailboxFilter(new ConsoleMailboxFilter())
                 .Build();
 

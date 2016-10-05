@@ -15,7 +15,7 @@ namespace SmtpServer
         /// <returns>The server options that have been set.</returns>
         public ISmtpServerOptions Build()
         {
-            _options.MessageStoreFactory = _options.MessageStoreFactory ?? new DoNothingMessageStore();
+            _options.MessageStoreFactory = _options.MessageStoreFactory ?? new DoNothingMessageStoreFactory();
 
             return _options;
         }

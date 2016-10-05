@@ -1,29 +1,42 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using SmtpServer.Mail;
 using SmtpServer.Protocol;
 
 namespace SmtpServer.Storage
 {
-    public abstract class MessageStore : IMessageStore, IMessageStoreFactory
+    public abstract class MessageStore : IMessageStore
     {
-        /// <summary>
-        /// Creates an instance of the message store for the given session context.
-        /// </summary>
-        /// <param name="context">The session context.</param>
-        /// <returns>The message store instance for the session context.</returns>
-        public virtual IMessageStore CreateInstance(ISessionContext context)
+        protected ISessionContext Context { get; }
+        protected IMimeMessage Message { get; }
+
+        protected MessageStore(ISessionContext context, IMimeMessage message)
         {
-            return this;
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            Context = context;
+            Message = message;
         }
 
-        /// <summary>
-        /// Save the given message to the underlying storage system.
-        /// </summary>
-        /// <param name="context">The session context.</param>
-        /// <param name="message">The SMTP message to store.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The response code to return that indicates the result of the message being saved.</returns>
-        public abstract Task<SmtpResponse> SaveAsync(ISessionContext context, IMimeMessage message, CancellationToken cancellationToken);
+        public virtual void Dispose()
+        {
+        }
+
+        public virtual Task<SmtpResponse> BeginWriteAsync(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(SmtpResponse.Ok);
+        }
+
+        public virtual Task WriteAsync(string line, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(true);
+        }
+
+        public virtual Task<SmtpResponse> EndWriteAsync(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(SmtpResponse.Ok);
+        }
     }
 }

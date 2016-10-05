@@ -7,7 +7,7 @@ namespace SmtpServer.Protocol
 {
     public sealed class DataCommand : SmtpCommand
     {
-        readonly IMessageStoreFactory _messageStoreFactory;
+        private readonly IMessageStoreFactory _messageStoreFactory;
 
         /// <summary>
         /// Constructor.
@@ -37,32 +37,45 @@ namespace SmtpServer.Protocol
                 return;
             }
 
-            await context.Text.ReplyAsync(new SmtpResponse(SmtpReplyCode.StartMailInput, "end with <CRLF>.<CRLF>"), cancellationToken).ConfigureAwait(false);
+            await context.Text.ReplyAsync(new SmtpResponse(SmtpReplyCode.StartMailInput, "end with <CRLF>.<CRLF>"),
+                                          cancellationToken)
+                         .ConfigureAwait(false);
 
             try
             {
-                string text;
-                while ((text = await context.Text.ReadLineAsync(TimeSpan.FromSeconds(60), cancellationToken).ConfigureAwait(false)) != ".")
+                using (var store = _messageStoreFactory.CreateInstance(context, context.Transaction))
                 {
-                    // need to trim the '.' at the start of the line if it 
-                    // exists as this would have been added for transparency
-                    // http://tools.ietf.org/html/rfc5321#section-4.5.2
-                    context.Transaction.Mime.AppendLine(text.TrimStart('.'));
-                }
-            }
-            catch (TimeoutException)
-            {
-                // TODO: not sure what the best thing to do here is
-                throw;
-            }
+                    var response = await store.BeginWriteAsync(cancellationToken).ConfigureAwait(false);
+                    if (response != SmtpResponse.Ok)
+                    {
+                        await context.Text.ReplyAsync(response, cancellationToken).ConfigureAwait(false);
+                        return;
+                    }
 
-            try
-            {
-                // store the transaction
-                using (var container = new DisposableContainer<IMessageStore>(_messageStoreFactory.CreateInstance(context)))
-                {
-                    var response = await container.Instance.SaveAsync(context, context.Transaction, cancellationToken).ConfigureAwait(false);
+                    var emptyLine = false;
+                    string text;
+                    var timeout = TimeSpan.FromSeconds(60);
+                    while ((text = await context.Text.ReadLineAsync(timeout, cancellationToken).ConfigureAwait(false)) != ".")
+                    {
+                        // need to trim the '.' at the start of the line if it 
+                        // exists as this would have been added for transparency
+                        // http://tools.ietf.org/html/rfc5321#section-4.5.2
 
+                        if (emptyLine) await store.WriteAsync(string.Empty, cancellationToken).ConfigureAwait(false);
+
+                        if (text == string.Empty)
+                        {
+                            emptyLine = true;
+                        }
+                        else
+                        {
+                            var line = text.Length > 1 && text[0] == '.' ? text.Remove(0, 1) : text;
+                            await store.WriteAsync(line, cancellationToken).ConfigureAwait(false);
+                            emptyLine = false;
+                        }
+                    }
+
+                    response = await store.EndWriteAsync(cancellationToken).ConfigureAwait(false);
                     await context.Text.ReplyAsync(response, cancellationToken).ConfigureAwait(false);
                 }
             }

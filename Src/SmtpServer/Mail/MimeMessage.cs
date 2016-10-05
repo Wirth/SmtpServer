@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 
 namespace SmtpServer.Mail
 {
@@ -14,10 +13,5 @@ namespace SmtpServer.Mail
         /// Gets or sets the collection of mailboxes that the message is to be delivered to.
         /// </summary>
         public IList<IMailbox> To { get; set; }
-
-        /// <summary>
-        /// Gets or sets the MIME content.
-        /// </summary>
-        public StringBuilder Mime { get; set; }
     }
 }

@@ -54,8 +54,7 @@ namespace SmtpServer.Protocol
 
                     var emptyLine = false;
                     string text;
-                    var timeout = TimeSpan.FromSeconds(60);
-                    while ((text = await context.Text.ReadLineAsync(timeout, cancellationToken).ConfigureAwait(false)) != ".")
+                    while ((text = await context.Text.ReadLineAsync(cancellationToken).ConfigureAwait(false)) != ".")
                     {
                         // need to trim the '.' at the start of the line if it 
                         // exists as this would have been added for transparency

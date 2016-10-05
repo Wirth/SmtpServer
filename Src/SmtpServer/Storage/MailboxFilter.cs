@@ -22,7 +22,7 @@ namespace SmtpServer.Storage
         /// <param name="from">The mailbox to test.</param>
         /// <param name="size">The estimated message size to accept.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
-        public virtual Task<MailboxFilterResult> CanAcceptFromAsync(ISessionContext context, IMailbox @from, int size = 0)
+        public virtual Task<MailboxFilterResult> CanAcceptFromAsync(ISessionContext context, IMailbox from, int size = 0)
         {
             return Task.FromResult(MailboxFilterResult.Yes);
         }
@@ -34,7 +34,7 @@ namespace SmtpServer.Storage
         /// <param name="to">The mailbox to test.</param>
         /// <param name="from">The sender's mailbox.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
-        public virtual Task<MailboxFilterResult> CanDeliverToAsync(ISessionContext context, IMailbox to, IMailbox @from)
+        public virtual Task<MailboxFilterResult> CanDeliverToAsync(ISessionContext context, IMailbox to, IMailbox from)
         {
             return Task.FromResult(MailboxFilterResult.Yes);
         }

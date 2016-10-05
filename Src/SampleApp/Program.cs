@@ -31,10 +31,10 @@ namespace SampleApp
 
                 cancellationTokenSource.Cancel();
 
-                serverTask.WaitWithoutException();
-                clientTask1.WaitWithoutException();
-                clientTask2.WaitWithoutException();
-                clientTask3.WaitWithoutException();
+                serverTask.WaitWithoutExceptionAsync();
+                clientTask1.WaitWithoutExceptionAsync();
+                clientTask2.WaitWithoutExceptionAsync();
+                clientTask3.WaitWithoutExceptionAsync();
 
                 return;
             }
@@ -48,7 +48,7 @@ namespace SampleApp
 
                 cancellationTokenSource.Cancel();
 
-                serverTask.WaitWithoutException();
+                serverTask.WaitWithoutExceptionAsync();
 
                 return;
             }
@@ -62,7 +62,7 @@ namespace SampleApp
 
                 cancellationTokenSource.Cancel();
 
-                clientTask.WaitWithoutException();
+                clientTask.WaitWithoutExceptionAsync();
             }
         }
 
@@ -73,7 +73,7 @@ namespace SampleApp
             smtpServer.SessionCreated += OnSmtpServerSessionCreated;
             smtpServer.SessionCompleted += OnSmtpServerSessionCompleted;
 
-            await smtpServer.StartAsync(cancellationToken);
+            await smtpServer.StartAsync(cancellationToken).ConfigureAwait(false);
 
             smtpServer.SessionCreated -= OnSmtpServerSessionCreated;
             smtpServer.SessionCompleted -= OnSmtpServerSessionCompleted;

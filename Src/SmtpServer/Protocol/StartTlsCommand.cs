@@ -27,11 +27,11 @@ namespace SmtpServer.Protocol
         /// <returns>A task which asynchronously performs the execution.</returns>
         public override async Task ExecuteAsync(ISmtpSessionContext context, CancellationToken cancellationToken)
         {
-            await context.Text.ReplyAsync(SmtpResponse.ServiceReady, cancellationToken);
+            await context.Text.ReplyAsync(SmtpResponse.ServiceReady, cancellationToken).ConfigureAwait(false);
 
             var stream = new SslStream(context.Text.GetInnerStream(), true);
 
-            await stream.AuthenticateAsServerAsync(_certificate, false, SslProtocols.Default, true);
+            await stream.AuthenticateAsServerAsync(_certificate, false, SslProtocols.Default, true).ConfigureAwait(false);
 
             context.Text = new NetworkTextStream(stream);
         }

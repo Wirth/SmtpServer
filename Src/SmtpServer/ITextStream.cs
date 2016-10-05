@@ -56,7 +56,7 @@ namespace SmtpServer
 
             try
             {
-                return await stream.ReadLineAsync().WithCancellation(cancellationToken);
+                return await stream.ReadLineAsync().WithCancellationAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -83,12 +83,12 @@ namespace SmtpServer
 
             var task = stream.ReadLineAsync();
 
-            if (task == await Task.WhenAny(task, Task.Delay(timeout, cancellationTokenSource.Token)))
+            if (task == await Task.WhenAny(task, Task.Delay(timeout, cancellationTokenSource.Token)).ConfigureAwait(false))
             {
                 cancellationTokenSource.Cancel();
                 cancellationTokenSource.Dispose();
 
-                return await task;
+                return await task.ConfigureAwait(false);
             }
 
             throw new TimeoutException();
@@ -110,7 +110,7 @@ namespace SmtpServer
 
             try
             {
-                await stream.WriteLineAsync(text).WithCancellation(cancellationToken);
+                await stream.WriteLineAsync(text).WithCancellationAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) { }
         }
@@ -130,7 +130,7 @@ namespace SmtpServer
 
             try
             {
-                await stream.FlushAsync().WithCancellation(cancellationToken);
+                await stream.FlushAsync().WithCancellationAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) { }
         }
@@ -149,8 +149,8 @@ namespace SmtpServer
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            await stream.WriteLineAsync($"{(int)response.ReplyCode} {response.Message}", cancellationToken);
-            await stream.FlushAsync(cancellationToken);
+            await stream.WriteLineAsync($"{(int)response.ReplyCode} {response.Message}", cancellationToken).ConfigureAwait(false);
+            await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

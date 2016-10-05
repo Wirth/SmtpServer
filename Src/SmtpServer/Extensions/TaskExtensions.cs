@@ -12,7 +12,7 @@ namespace SmtpServer
         /// <param name="task">The task to wait for.</param>
         /// <param name="cancellationToken">The cancellation token to watch.</param>
         /// <returns>The original task.</returns>
-        public static async Task WithCancellation(this Task task, CancellationToken cancellationToken)
+        public static async Task WithCancellationAsync(this Task task, CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();
 
@@ -34,7 +34,7 @@ namespace SmtpServer
         /// <param name="task">The task to wait for.</param>
         /// <param name="cancellationToken">The cancellation token to watch.</param>
         /// <returns>The original task.</returns>
-        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
+        public static async Task<T> WithCancellationAsync<T>(this Task<T> task, CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();
 

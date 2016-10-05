@@ -34,11 +34,11 @@ namespace SmtpServer.Protocol
 
             for (var i = 0; i < output.Length - 1; i++)
             {
-                await context.Text.WriteLineAsync($"250-{output[i]}", cancellationToken);
+                await context.Text.WriteLineAsync($"250-{output[i]}", cancellationToken).ConfigureAwait(false);
             }
 
-            await context.Text.WriteLineAsync($"250 {output[output.Length - 1]}", cancellationToken);
-            await context.Text.FlushAsync(cancellationToken);
+            await context.Text.WriteLineAsync($"250 {output[output.Length - 1]}", cancellationToken).ConfigureAwait(false);
+            await context.Text.FlushAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>

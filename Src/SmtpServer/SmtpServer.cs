@@ -85,7 +85,7 @@ namespace SmtpServer
                 while (cancellationToken.IsCancellationRequested == false)
                 {
                     // wait for a client connection
-                    var tcpClient = await tcpListener.AcceptTcpClientAsync().WithCancellation(cancellationToken).ConfigureAwait(false);
+                    var tcpClient = await tcpListener.AcceptTcpClientAsync().WithCancellationAsync(cancellationToken).ConfigureAwait(false);
                     
                     _logger.LogVerbose("SMTP client accepted [{0}]", tcpClient.Client.RemoteEndPoint);
 

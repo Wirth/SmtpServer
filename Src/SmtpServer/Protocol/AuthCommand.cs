@@ -39,7 +39,7 @@ namespace SmtpServer.Protocol
             switch (_method)
             {
                 case AuthenticationMethod.Plain:
-                    if (await TryPlainAsync(context, cancellationToken) == false)
+                    if (await TryPlainAsync(context, cancellationToken).ConfigureAwait(false) == false)
                     {
                         await context.Text.ReplyAsync(SmtpResponse.AuthenticationFailed, cancellationToken).ConfigureAwait(false);
                         return;
@@ -47,7 +47,7 @@ namespace SmtpServer.Protocol
                     break;
 
                 case AuthenticationMethod.Login:
-                    if (await TryLoginAsync(context, cancellationToken) == false)
+                    if (await TryLoginAsync(context, cancellationToken).ConfigureAwait(false) == false)
                     {
                         await context.Text.ReplyAsync(SmtpResponse.AuthenticationFailed, cancellationToken).ConfigureAwait(false);
                         return;
@@ -103,13 +103,13 @@ namespace SmtpServer.Protocol
         /// <returns>true if the LOGIN login sequence worked, false if not.</returns>
         async Task<bool> TryLoginAsync(ISmtpSessionContext context, CancellationToken cancellationToken)
         {
-            await context.Text.ReplyAsync(new SmtpResponse(SmtpReplyCode.ContinueWithAuth, "VXNlcm5hbWU6"), cancellationToken);
+            await context.Text.ReplyAsync(new SmtpResponse(SmtpReplyCode.ContinueWithAuth, "VXNlcm5hbWU6"), cancellationToken).ConfigureAwait(false);
 
             _user = Encoding.UTF8.GetString(
                 Convert.FromBase64String(
                     await context.Text.ReadLineAsync(cancellationToken).ConfigureAwait(false)));
 
-            await context.Text.ReplyAsync(new SmtpResponse(SmtpReplyCode.ContinueWithAuth, "UGFzc3dvcmQ6"), cancellationToken);
+            await context.Text.ReplyAsync(new SmtpResponse(SmtpReplyCode.ContinueWithAuth, "UGFzc3dvcmQ6"), cancellationToken).ConfigureAwait(false);
 
             _password = Encoding.UTF8.GetString(
                 Convert.FromBase64String(

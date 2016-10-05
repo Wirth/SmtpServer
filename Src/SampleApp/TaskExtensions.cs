@@ -4,7 +4,7 @@ namespace SampleApp
 {
     public static class TaskExtensions
     {
-        public static Task WaitWithoutException(this Task task)
+        public static Task WaitWithoutExceptionAsync(this Task task)
         {
             return task.ContinueWith(t => { });
         }

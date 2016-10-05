@@ -71,7 +71,7 @@ namespace SmtpServer.Protocol.Text
                 _index++;
             }
 
-            return new Token(TokenKind.Text, _input.Substring(start, (_index - start) + 1));
+            return new Token(TokenKind.Text, _input.Substring(start, _index - start + 1));
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace SmtpServer.Protocol.Text
                 _index++;
             }
 
-            return new Token(tokenKind, _input.Substring(start, (_index - start) + 1));
+            return new Token(tokenKind, _input.Substring(start, _index - start + 1));
         }
 
         /// <summary>

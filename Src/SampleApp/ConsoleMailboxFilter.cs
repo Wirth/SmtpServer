@@ -15,7 +15,7 @@ namespace SampleApp
         /// <param name="from">The mailbox to test.</param>
         /// <param name="size">The estimated message size to accept.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
-        public override Task<MailboxFilterResult> CanAcceptFromAsync(ISessionContext context, IMailbox @from, int size = 0)
+        public override Task<MailboxFilterResult> CanAcceptFromAsync(ISessionContext context, IMailbox from, int size = 0)
         {
             var endpoint = (IPEndPoint) context.RemoteEndPoint;
             
@@ -35,7 +35,7 @@ namespace SampleApp
         /// <param name="to">The mailbox to test.</param>
         /// <param name="from">The sender's mailbox.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
-        public override Task<MailboxFilterResult> CanDeliverToAsync(ISessionContext context, IMailbox to, IMailbox @from)
+        public override Task<MailboxFilterResult> CanDeliverToAsync(ISessionContext context, IMailbox to, IMailbox from)
         {
             return Task.FromResult(MailboxFilterResult.Yes);
         }

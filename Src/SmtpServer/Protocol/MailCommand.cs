@@ -50,29 +50,29 @@ namespace SmtpServer.Protocol
             // check against the server supplied maximum
             if (_maxMessageSize > 0 && size > _maxMessageSize)
             {
-                await context.Text.ReplyAsync(SmtpResponse.SizeLimitExceeded, cancellationToken);
+                await context.Text.ReplyAsync(SmtpResponse.SizeLimitExceeded, cancellationToken).ConfigureAwait(false);
                 return;
             }
 
             using (var container = new DisposableContainer<IMailboxFilter>(_mailboxFilterFactory.CreateInstance(context)))
             {
-                switch (await container.Instance.CanAcceptFromAsync(context, Address, size))
+                switch (await container.Instance.CanAcceptFromAsync(context, Address, size).ConfigureAwait(false))
                 {
                     case MailboxFilterResult.Yes:
                         context.Transaction.From = _address;
-                        await context.Text.ReplyAsync(SmtpResponse.Ok, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.Ok, cancellationToken).ConfigureAwait(false);
                         return;
 
                     case MailboxFilterResult.NoTemporarily:
-                        await context.Text.ReplyAsync(SmtpResponse.MailboxUnavailable, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.MailboxUnavailable, cancellationToken).ConfigureAwait(false);
                         return;
 
                     case MailboxFilterResult.NoPermanently:
-                        await context.Text.ReplyAsync(SmtpResponse.MailboxNameNotAllowed, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.MailboxNameNotAllowed, cancellationToken).ConfigureAwait(false);
                         return;
 
                     case MailboxFilterResult.SizeLimitExceeded:
-                        await context.Text.ReplyAsync(SmtpResponse.SizeLimitExceeded, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.SizeLimitExceeded, cancellationToken).ConfigureAwait(false);
                         return;
                 }
             }

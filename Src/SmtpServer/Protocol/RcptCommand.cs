@@ -37,19 +37,19 @@ namespace SmtpServer.Protocol
         {
             using (var container = new DisposableContainer<IMailboxFilter>(_mailboxFilterFactory.CreateInstance(context)))
             {
-                switch (await container.Instance.CanDeliverToAsync(context, _address, context.Transaction.From))
+                switch (await container.Instance.CanDeliverToAsync(context, _address, context.Transaction.From).ConfigureAwait(false))
                 {
                     case MailboxFilterResult.Yes:
                         context.Transaction.To.Add(_address);
-                        await context.Text.ReplyAsync(SmtpResponse.Ok, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.Ok, cancellationToken).ConfigureAwait(false);
                         return;
 
                     case MailboxFilterResult.NoTemporarily:
-                        await context.Text.ReplyAsync(SmtpResponse.MailboxUnavailable, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.MailboxUnavailable, cancellationToken).ConfigureAwait(false);
                         return;
 
                     case MailboxFilterResult.NoPermanently:
-                        await context.Text.ReplyAsync(SmtpResponse.MailboxNameNotAllowed, cancellationToken);
+                        await context.Text.ReplyAsync(SmtpResponse.MailboxNameNotAllowed, cancellationToken).ConfigureAwait(false);
                         return;
                 }
             }

@@ -56,7 +56,7 @@ namespace SmtpServer
         /// <returns>A task that represents the asynchronous write operation.</returns>
         public Task WriteLineAsync(string text)
         {
-            return _writer.WriteLineAsync(text);
+            return _writer.WriteAsync(text + "\r\n");
         }
 
         /// <summary>

@@ -57,11 +57,11 @@ namespace SmtpServer
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task which performs the operation.</returns>
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInfo("Starting the SMTP Server");
 
-            await Task.WhenAll(_options.Endpoints.Select(e => ListenAsync(e, cancellationToken))).ConfigureAwait(false);
+            return Task.WhenAll(_options.Endpoints.Select(e => ListenAsync(e, cancellationToken)));
         }
 
         /// <summary>

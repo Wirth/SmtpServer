@@ -55,8 +55,8 @@ namespace SmtpServer.Protocol
         public bool TryMakePath(TokenEnumerator enumerator, out IMailbox mailbox)
         {
             mailbox = null;
-
-            if (enumerator.Take() != new Token(TokenKind.Symbol, "<"))
+            enumerator.TakeWhile(t => t != new Token(TokenKind.Symbol, "<"));
+            if (enumerator. Take() != new Token(TokenKind.Symbol, "<"))
             {
                 return false;
             }

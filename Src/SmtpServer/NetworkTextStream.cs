@@ -27,8 +27,9 @@ namespace SmtpServer
         {
             _stream = stream;
 
-            _reader = new StreamReader(stream, Encoding.ASCII);
-            _writer = new StreamWriter(stream, Encoding.ASCII);
+            var encoding = Encoding.GetEncoding(1251);
+            _reader = new StreamReader(stream, encoding);
+            _writer = new StreamWriter(stream, encoding);
         }
 
         /// <summary>

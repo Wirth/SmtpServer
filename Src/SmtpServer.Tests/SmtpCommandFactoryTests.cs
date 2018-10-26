@@ -104,11 +104,13 @@ namespace SmtpServer.Tests
             Assert.Equal(input.Substring(5), ((EhloCommand)command).DomainOrAddress);
         }
 
-        [Fact]
-        public void CanMakeMail()
+        [Theory]
+        [InlineData("MAIL FROM:<cain.osullivan@gmail.com>")]
+        [InlineData("MAIL FROM:cain.osullivan@gmail.com")]
+        public void CanMakeMail(string input)
         {
             // arrange
-            var enumerator = new TokenEnumerator(new StringTokenReader("MAIL FROM:<cain.osullivan@gmail.com>"));
+            var enumerator = new TokenEnumerator(new StringTokenReader(input));
 
             // act
             SmtpCommand command;

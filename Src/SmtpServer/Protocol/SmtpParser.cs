@@ -55,11 +55,8 @@ namespace SmtpServer.Protocol
         public bool TryMakePath(TokenEnumerator enumerator, out IMailbox mailbox)
         {
             mailbox = null;
-            enumerator.TakeWhile(t => t != new Token(TokenKind.Symbol, "<"));
-            if (enumerator. Take() != new Token(TokenKind.Symbol, "<"))
-            {
-                return false;
-            }
+            var haveHook = enumerator.Take() == new Token(TokenKind.Symbol, "<");
+            if (!haveHook) enumerator.Take(-1);
 
             // Note, the at-domain-list must be matched, but also must be ignored
             // http://tools.ietf.org/html/rfc5321#appendix-C
@@ -78,7 +75,9 @@ namespace SmtpServer.Protocol
                 return false;
             }
 
-            return enumerator.Take() == new Token(TokenKind.Symbol, ">");
+            if (haveHook) return enumerator.Take() == new Token(TokenKind.Symbol, ">");
+
+            return true;
         }
 
         /// <summary>

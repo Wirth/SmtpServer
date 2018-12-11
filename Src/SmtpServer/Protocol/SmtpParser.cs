@@ -55,8 +55,18 @@ namespace SmtpServer.Protocol
         public bool TryMakePath(TokenEnumerator enumerator, out IMailbox mailbox)
         {
             mailbox = null;
-            var haveHook = enumerator.Take() == new Token(TokenKind.Symbol, "<");
-            if (!haveHook) enumerator.Take(-1);
+
+            enumerator.TakeWhile(t => t.Kind == TokenKind.Space && t.Kind != TokenKind.None);
+
+            var checkpoint = enumerator.Checkpoint();
+
+            var haveHook = false;
+            var hookToken = new Token(TokenKind.Symbol, "<");
+
+            enumerator.TakeWhile(t => t != hookToken && t.Kind != TokenKind.None);
+            var tmpToken = enumerator.Take();
+            if (tmpToken == hookToken) haveHook = true;
+            else checkpoint.Rollback();
 
             // Note, the at-domain-list must be matched, but also must be ignored
             // http://tools.ietf.org/html/rfc5321#appendix-C

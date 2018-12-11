@@ -106,7 +106,11 @@ namespace SmtpServer.Tests
 
         [Theory]
         [InlineData("MAIL FROM:<cain.osullivan@gmail.com>")]
+        [InlineData("MAIL FROM: <cain.osullivan@gmail.com>")]
         [InlineData("MAIL FROM:cain.osullivan@gmail.com")]
+        [InlineData("MAIL FROM: cain.osullivan@gmail.com")]
+        [InlineData("MAIL FROM:cain.osullivan<cain.osullivan@gmail.com>")]
+        [InlineData("MAIL FROM: cain.osullivan<cain.osullivan@gmail.com>")]
         public void CanMakeMail(string input)
         {
             // arrange
@@ -175,11 +179,17 @@ namespace SmtpServer.Tests
             Assert.NotNull(errorResponse);
         }
 
-        [Fact]
-        public void CanMakeRcpt()
+        [Theory]
+        [InlineData("RCPT TO:<cain.osullivan@gmail.com>")]
+        [InlineData("RCPT TO: <cain.osullivan@gmail.com>")]
+        [InlineData("RCPT TO:cain.osullivan@gmail.com")]
+        [InlineData("RCPT TO: cain.osullivan@gmail.com")]
+        [InlineData("RCPT TO:cain osullivan<cain.osullivan@gmail.com>")]
+        [InlineData("RCPT TO: cain osullivan<cain.osullivan@gmail.com>")]
+        public void CanMakeRcpt(string input)
         {
             // arrange
-            var enumerator = new TokenEnumerator(new StringTokenReader("RCPT TO:<cain.osullivan@gmail.com>"));
+            var enumerator = new TokenEnumerator(new StringTokenReader(input));
 
             // act
             SmtpCommand command;
